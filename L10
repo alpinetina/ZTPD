@@ -1,0 +1,124 @@
+(:zad5:)
+(:for $author in doc("db/bib/bib.xml")//book/author
+return $author/last:)
+
+(:zad6:)
+(:for $book in doc("db/bib/bib.xml")//book
+  for $author in $book/author
+    return <ksiazka>
+      <author>
+        {$author/last}
+        {$author/first}
+      </author>
+      <title>{$book/title}</title>
+    </ksiazka>:)
+    
+(:zad7-9:)
+(:<wynik>
+{for $book in doc("db/bib/bib.xml")//book
+  for $author in $book/author
+    return
+      <ksiazka>
+        <author>{$author/last || " " || $author/first}</author>
+        <title>{$book/title}</title>
+      </ksiazka>}
+    </wynik>:)
+    
+(:zad10:)
+(:<imiona>
+{
+  for $book in doc("db/bib/bib.xml")//book[title="Data on the Web"]
+    for $author in $book/author
+      return <imie>{data($author/first)}</imie>
+}
+</imiona>:)
+
+(:zad11:)
+(:<DataOnTheWeb>
+{
+  doc("db/bib/bib.xml")//book[title="Data on the Web"]
+}
+</DataOnTheWeb>:)
+
+(:<DataOnTheWeb>
+{
+  for $book in doc("db/bib/bib.xml")//book
+  where $book/title = "Data on the Web"
+  return $book
+}
+</DataOnTheWeb>:)
+
+(:zad12:)
+(:<Data>{
+for $book in doc("db/bib/bib.xml")//book[contains(title, "Data")]
+  for $author in $book/author
+    return <nazwisko>{data($author/last)}</nazwisko>
+}</Data>:)
+
+(:zad13:)
+(:<Data>{
+for $book in doc("db/bib/bib.xml")//book[contains(title, "Data")]
+  return(
+    <title>{data($book/title)}</title>,
+    for $author in $book/author
+      return <nazwisko>{data($author/last)}</nazwisko>
+)}</Data>:)
+
+(:zad14:)
+(:for $book in doc("db/bib/bib.xml")//book[count(author) <= 2]
+    return $book/title:)
+    
+(:zad15:)
+(:for $book in doc("db/bib/bib.xml")//book
+    return <ksiazka>
+      <title>{data($book/title)}</title>
+      <autorow>{count($book/author)}</autorow>
+    </ksiazka>:)
+    
+(:zad16:)
+(:<przedział>
+  {min(doc("db/bib/bib.xml")//book/@year) || " - " || max(doc("db/bib/bib.xml")//book/@year)}
+</przedział>:)
+
+(:zad17:)
+(:<różnica>{max(doc("db/bib/bib.xml")//book//price) - min(doc("db/bib/bib.xml")//book//price)}</różnica>:)
+
+(:zad18:)
+(:<najtańsze>{
+for $book in doc("db/bib/bib.xml")//book[price = min(doc("db/bib/bib.xml")//book//price)]
+  return(
+    <najtańsza>
+      {$book/title},
+      {for $author in $book/author
+        return $author}
+    </najtańsza>
+)}</najtańsze>:)
+
+(:zad19:)
+(:for $author in (doc("db/bib/bib.xml")//book/author)
+return
+  <author>
+    {$author/last}
+    {
+      for $book in doc("db/bib/bib.xml")//book[author/last = $author/last]
+      return <title>{$book/title}</title>
+    }
+  </author>:)
+  
+(:zad20:)
+(:<wynik>{collection("db/shakespeare")//PLAY/TITLE}</wynik>:)
+
+(:zad21:)
+(:for $play in collection("db/shakespeare")//PLAY[.//LINE[contains(., "or not to be")]]
+return $play/TITLE:)
+
+(:zad22:)
+<wynik>{
+for $play in collection("db/shakespeare")//PLAY
+  return
+    <sztuka tytył="{data($play/TITLE)}">
+        <postaci>{count($play//PERSONA)}</postaci>
+        <aktow>{count($play//ACT)}</aktow>
+        <scen>{count($play//SCENE)}</scen>
+    </sztuka>
+}</wynik>
